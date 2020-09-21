@@ -84,7 +84,7 @@ void read_board() {
 
 bool board_in_error_state() {
 	// Too many x or o
-	if (boardSum > 1 || boardSum < -1) {
+	if (boardSum > 1 || boardSum < 0) {
 		return true;
 	}
 	
@@ -94,13 +94,19 @@ bool board_in_error_state() {
 	}
 
 
-	// Both won at the same time
+	
 	if(!winning_plays.empty()) {
+		// Both won at the same time
 		const coord winnerCoord = winning_plays[0].coords[0];
 		const int winner = board[winnerCoord.x][winnerCoord.y];
 		for (const auto& v : winning_plays) {
 			const coord c = v.coords[0];
 			if (board[c.x][c.y] != winner) return true;
+		}
+
+		// X won, but O has as many placed tiles.
+		if(winner == 1 && boardSum == 0) {
+			return true;
 		}
 	}
 
@@ -129,6 +135,7 @@ bool board_in_error_state() {
 		}
 	}
 
+	
 	
 	return false;
 }
