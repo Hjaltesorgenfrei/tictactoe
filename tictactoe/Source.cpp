@@ -86,6 +86,8 @@ bool board_in_error_state() {
 		if (v.coords.size() > m * 2 - 1) return true;
 	}
 
+
+	// Both won at the same time
 	if(!winning_plays.empty()) {
 		const coord winnerCoord = winning_plays[0].coords[0];
 		const int winner = board[winnerCoord.x][winnerCoord.y];
@@ -94,6 +96,17 @@ bool board_in_error_state() {
 			if (board[c.x][c.y] != winner) return true;
 		}
 	}
+
+	// Won in more then one spot at the same time.
+	// This might not be complete.
+	set<Direction> directions;
+	for (const auto& v : winning_plays) {
+		if(directions.find(v.dir) != directions.end()) {
+			return true;
+		}
+		directions.insert(v.dir);
+	}
+
 	
 	return false;
 }
@@ -168,7 +181,7 @@ void inline find_diagonal_wins() {
 			tmp = board[i][j];
 			if (tmp != current_place) {
 				if (current_diagonal.size() >= m) {
-					winning_plays.push_back({ current_diagonal, Direction::DOWN });
+					winning_plays.push_back({ current_diagonal, Direction::DIAGONAL });
 				}
 				current_place = tmp;
 				current_diagonal.clear();
@@ -182,18 +195,18 @@ void inline find_diagonal_wins() {
 				}
 			}
 			if (current_diagonal.size() >= m) {
-				winning_plays.push_back({ current_diagonal, Direction::DOWN });
+				winning_plays.push_back({ current_diagonal, Direction::DIAGONAL });
 			}
 		}
 		current_place = 0;
 		current_diagonal.clear();
 	}
-	for (unsigned int y = 0, x = 0; x < n; x++) {
+	for (unsigned int y = 1, x = 0; x < n; x++) {
 		for (unsigned int i = x, j = y; i < n && j < n; j++, i++) {
 			tmp = board[i][j];
 			if (tmp != current_place) {
 				if (current_diagonal.size() >= m) {
-					winning_plays.push_back({ current_diagonal, Direction::DOWN });
+					winning_plays.push_back({ current_diagonal, Direction::DIAGONAL });
 				}
 				current_place = tmp;
 				current_diagonal.clear();
@@ -207,7 +220,7 @@ void inline find_diagonal_wins() {
 				}
 			}
 			if (current_diagonal.size() >= m) {
-				winning_plays.push_back({ current_diagonal, Direction::DOWN });
+				winning_plays.push_back({ current_diagonal, Direction::DIAGONAL });
 			}
 		}
 		current_place = 0;
@@ -250,7 +263,9 @@ int main()
 		return 0;
 	}
 	
+	cout << "IN PROGRESS" << endl;
+
 	
-    print_values();
+    //print_values();
     return 0;
 }
