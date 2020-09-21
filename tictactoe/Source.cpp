@@ -257,7 +257,7 @@ void find_winning_plays() {
 }
 
 bool board_has_one_winner() {
-	return winning_plays.size() > 0;
+	return !winning_plays.empty();
 }
 
 bool board_in_draw_state() {
@@ -275,8 +275,8 @@ int main()
 		return 0;
 	}
 	if (board_has_one_winner()) {
-		coord loc = winning_plays[0].coords[0];
-		char winner = board[loc.x][loc.y] == 1 ? 'X' : 'O';
+		const coord loc = winning_plays[0].coords[0];
+		const char winner = board[loc.x][loc.y] == 1 ? 'X' : 'O';
 		cout << winner << " WINS" << endl;
 		return 0;
 	}
