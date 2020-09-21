@@ -23,6 +23,7 @@ struct winning_play {
 
 unsigned int n, m;
 int boardSum;
+int emptySquares = 0;
 vector<vector<int>> board;
 vector<winning_play> winning_plays;
 
@@ -46,6 +47,7 @@ void read_board() {
 			switch(buf[j]) {
 			case '.':
 				board[i][j] = 0;
+				emptySquares++;
 				break;
 			case 'X':
 				board[i][j] = 1;
@@ -223,6 +225,10 @@ bool board_has_one_winner() {
 	return winning_plays.size() > 0;
 }
 
+bool board_in_draw_state() {
+	return emptySquares == 0;
+}
+
 int main()
 {
     ios::sync_with_stdio(false);
@@ -237,6 +243,10 @@ int main()
 		coord loc = winning_plays[0].coords[0];
 		char winner = board[loc.x][loc.y] == 1 ? 'X' : 'O';
 		cout << winner << " WINS" << endl;
+		return 0;
+	}
+	if(board_in_draw_state()) {
+		cout << "DRAW" << endl;
 		return 0;
 	}
 	
