@@ -186,7 +186,7 @@ void inline find_diagonal_wins() {
 		current_place = 0;
 		current_diagonal.clear();
 	}
-	for (unsigned int y = 0, x = 0; y < n; x++) {
+	for (unsigned int y = 0, x = 0; x < n; x++) {
 		for (unsigned int i = x, j = y; i < n && j < n; j++, i++) {
 			tmp = board[i][j];
 			if (tmp != current_place) {
