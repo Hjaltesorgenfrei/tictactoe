@@ -14,6 +14,13 @@ enum class Direction {
 struct coord {
 	unsigned int x;
 	unsigned int y;
+	bool operator <(const coord& rhs) const {
+		if (x != rhs.x) return x < rhs.x;
+		return y < rhs.y;
+	}
+	bool operator ==(const coord& rhs) const {
+		return x == rhs.x && y == rhs.y;
+	}
 };
 
 struct winning_play {
@@ -97,14 +104,29 @@ bool board_in_error_state() {
 		}
 	}
 
-	// Won in more then one spot at the same time.
-	// This might not be complete.
-	set<Direction> directions;
+
+	//Check if all wins at the same location overlaps
+	set<coord> hitSpots;
+	bool spotFound = false;
+	coord spot;
 	for (const auto& v : winning_plays) {
-		if(directions.find(v.dir) != directions.end()) {
+		bool overlapFound = false;
+		for(const auto& c: v.coords) {
+			if (hitSpots.find(c) == hitSpots.end()) {
+				hitSpots.insert(c);
+			} else {
+				overlapFound = true;
+				if (spotFound) {
+					if (c.x != spot.x || c.y != spot.y) return true;
+				} else {
+					spot = c;
+					spotFound = true;
+				}
+			}
+		}
+		if (winning_plays.size() > 1 && (!overlapFound && !(winning_plays[0].coords == v.coords))) {
 			return true;
 		}
-		directions.insert(v.dir);
 	}
 
 	
@@ -194,14 +216,14 @@ void inline find_diagonal_wins() {
 					current_diagonal.push_back({ i, j });
 				}
 			}
-			if (current_diagonal.size() >= m) {
-				winning_plays.push_back({ current_diagonal, Direction::DIAGONAL });
-			}
+		}
+		if (current_diagonal.size() >= m) {
+			winning_plays.push_back({ current_diagonal, Direction::DIAGONAL });
 		}
 		current_place = 0;
 		current_diagonal.clear();
 	}
-	for (unsigned int y = 1, x = 0; x < n; x++) {
+	for (unsigned int y = 0, x = 1; x < n; x++) {
 		for (unsigned int i = x, j = y; i < n && j < n; j++, i++) {
 			tmp = board[i][j];
 			if (tmp != current_place) {
@@ -219,9 +241,9 @@ void inline find_diagonal_wins() {
 					current_diagonal.push_back({ i, j });
 				}
 			}
-			if (current_diagonal.size() >= m) {
-				winning_plays.push_back({ current_diagonal, Direction::DIAGONAL });
-			}
+		}
+		if (current_diagonal.size() >= m) {
+			winning_plays.push_back({ current_diagonal, Direction::DIAGONAL });
 		}
 		current_place = 0;
 		current_diagonal.clear();
