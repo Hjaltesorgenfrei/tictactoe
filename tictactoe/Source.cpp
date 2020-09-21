@@ -108,6 +108,11 @@ bool board_in_error_state() {
 		if(winner == 1 && boardSum == 0) {
 			return true;
 		}
+
+		// O won, but X has placed more.
+		if (winner == -1 && boardSum == 1) {
+			return true;
+		}
 	}
 
 
