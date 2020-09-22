@@ -7,6 +7,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tictactoe", "tictactoe\tict
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "testCaseGenerator", "testCaseGenerator\testCaseGenerator.vcxproj", "{784BFC61-4A62-4BAC-83CD-B3209F9EB7F5}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tictactoe2", "tictactoe2\tictactoe2.vcxproj", "{C2EF5462-9E86-4FAA-9587-D53A7BA92C0B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -31,6 +33,14 @@ Global
 		{784BFC61-4A62-4BAC-83CD-B3209F9EB7F5}.Release|x64.Build.0 = Release|x64
 		{784BFC61-4A62-4BAC-83CD-B3209F9EB7F5}.Release|x86.ActiveCfg = Release|Win32
 		{784BFC61-4A62-4BAC-83CD-B3209F9EB7F5}.Release|x86.Build.0 = Release|Win32
+		{C2EF5462-9E86-4FAA-9587-D53A7BA92C0B}.Debug|x64.ActiveCfg = Debug|x64
+		{C2EF5462-9E86-4FAA-9587-D53A7BA92C0B}.Debug|x64.Build.0 = Debug|x64
+		{C2EF5462-9E86-4FAA-9587-D53A7BA92C0B}.Debug|x86.ActiveCfg = Debug|Win32
+		{C2EF5462-9E86-4FAA-9587-D53A7BA92C0B}.Debug|x86.Build.0 = Debug|Win32
+		{C2EF5462-9E86-4FAA-9587-D53A7BA92C0B}.Release|x64.ActiveCfg = Release|x64
+		{C2EF5462-9E86-4FAA-9587-D53A7BA92C0B}.Release|x64.Build.0 = Release|x64
+		{C2EF5462-9E86-4FAA-9587-D53A7BA92C0B}.Release|x86.ActiveCfg = Release|Win32
+		{C2EF5462-9E86-4FAA-9587-D53A7BA92C0B}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

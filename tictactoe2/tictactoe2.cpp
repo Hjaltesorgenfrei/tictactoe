@@ -28,46 +28,60 @@ struct winning_play {
 	Direction dir;
 };
 
-unsigned int n, m;
+struct boardS {
+	vector<vector<int>> board;
+	int boardSum;
+};
+
+int rows = 0;
+unsigned int n = 3;
 int boardSum;
 int emptySquares = 0;
+vector<boardS> boards;
 vector<vector<int>> board;
 vector<winning_play> winning_plays;
 
 void print_values() {
-    cout << "Board Sum: " << boardSum << endl;
+	cout << "Board Sum: " << boardSum << endl;
 }
 
-void read_board() {
-	cin >> n >> m;
+void read_boards() {
 	//Resize board
-	board.resize(n);
-	for (unsigned int i = 0; i < n; i++) {
-		board[i].resize(n);
-	}
-	
+	cin >> rows;
 	string buf;
 	getline(cin, buf);
-	for(unsigned i = 0; i < n; i++) {
-		getline(cin, buf);
-		for(unsigned int j = 0; j < buf.size(); j++) {
-			switch(buf[j]) {
-			case '.':
-				board[i][j] = 0;
-				emptySquares++;
-				break;
-			case 'X':
-				board[i][j] = 1;
-				boardSum += 1;
-				break;
-			case 'O':
-				board[i][j] = -1;
-				boardSum += -1;
-				break;
-			default:
-				break;
+	for (int ooh = 0; ooh < rows; ooh++) {
+		vector<vector<int>> tboard;
+		int tboardSum = 0;
+		tboard.resize(n);
+		for (unsigned int i = 0; i < n; i++) {
+			tboard[i].resize(n);
+		}
+
+
+		for (unsigned i = 0; i < n; i++) {
+			getline(cin, buf);
+			for (unsigned int j = 0; j < buf.size(); j++) {
+				switch (buf[j]) {
+				case '.':
+					tboard[i][j] = 0;
+					emptySquares++;
+					break;
+				case 'X':
+					tboard[i][j] = 1;
+					tboardSum += 1;
+					break;
+				case 'O':
+					tboard[i][j] = -1;
+					tboardSum += -1;
+					break;
+				default:
+					break;
+				}
 			}
 		}
+		if (ooh != rows - 1) getline(cin, buf);
+		boards.push_back({ tboard, tboardSum });
 	}
 }
 
@@ -79,7 +93,7 @@ void read_board() {
  *	Won in more then one spot at a time.
  *	(X) Both won at the same time
  *	(X) More then m*2-1 in a row as a winning move
- *	
+ *
  */
 
 bool board_in_error_state() {
@@ -87,15 +101,10 @@ bool board_in_error_state() {
 	if (boardSum > 1 || boardSum < 0) {
 		return true;
 	}
-	
-	// More then m*2-1 in a row as a winning move
-	for (const auto& v : winning_plays) {
-		if (v.coords.size() > m * 2 - 1) return true;
-	}
 
 
-	
-	if(!winning_plays.empty()) {
+
+	if (!winning_plays.empty()) {
 		// Both won at the same time
 		const coord winnerCoord = winning_plays[0].coords[0];
 		const int winner = board[winnerCoord.x][winnerCoord.y];
@@ -105,7 +114,7 @@ bool board_in_error_state() {
 		}
 
 		// X won, but O has as many placed tiles.
-		if(winner == 1 && boardSum == 0) {
+		if (winner == 1 && boardSum == 0) {
 			return true;
 		}
 
@@ -122,14 +131,16 @@ bool board_in_error_state() {
 	coord spot;
 	for (const auto& v : winning_plays) {
 		bool overlapFound = false;
-		for(const auto& c: v.coords) {
+		for (const auto& c : v.coords) {
 			if (hitSpots.find(c) == hitSpots.end()) {
 				hitSpots.insert(c);
-			} else {
+			}
+			else {
 				overlapFound = true;
 				if (spotFound) {
 					if (c.x != spot.x || c.y != spot.y) return true;
-				} else {
+				}
+				else {
 					spot = c;
 					spotFound = true;
 				}
@@ -140,15 +151,8 @@ bool board_in_error_state() {
 		}
 	}
 
-	for (const auto& v : winning_plays) {
-		int size = v.coords.size();
-		for (int i = 0; i < size; i++) {
-			if (v.coords[i] == spot && (i >= m || (size - i - 1) >= m)) return true;
-		}
-	}
 
-	
-	
+
 	return false;
 }
 
@@ -156,11 +160,11 @@ void inline find_horizontal_wins() {
 	vector<coord> current_row;
 	int current_place = 0;
 	int tmp = 0;
-	for(unsigned int i = 0; i < n; i++) {
+	for (unsigned int i = 0; i < n; i++) {
 		for (unsigned int j = 0; j < n; j++) {
 			tmp = board[i][j];
 			if (tmp != current_place) {
-				if (current_row.size() >= m) {
+				if (current_row.size() == 3) {
 					winning_plays.push_back({ current_row, Direction::RIGHT });
 				}
 				current_place = tmp;
@@ -168,13 +172,14 @@ void inline find_horizontal_wins() {
 				if (current_place != 0) {
 					current_row.push_back({ i, j });
 				}
-			} else {
+			}
+			else {
 				if (current_place != 0) {
 					current_row.push_back({ i, j });
 				}
 			}
 		}
-		if (current_row.size() >= m) {
+		if (current_row.size() == 3) {
 			winning_plays.push_back({ current_row, Direction::RIGHT });
 		}
 		current_place = 0;
@@ -190,7 +195,7 @@ void inline find_vertical_wins() {
 		for (unsigned int i = 0; i < n; i++) {
 			tmp = board[i][j];
 			if (tmp != current_place) {
-				if (current_column.size() >= m) {
+				if (current_column.size() == 3) {
 					winning_plays.push_back({ current_column, Direction::DOWN });
 				}
 				current_place = tmp;
@@ -205,7 +210,7 @@ void inline find_vertical_wins() {
 				}
 			}
 		}
-		if (current_column.size() >= m) {
+		if (current_column.size() == 3) {
 			winning_plays.push_back({ current_column, Direction::DOWN });
 		}
 		current_place = 0;
@@ -217,7 +222,7 @@ void inline doTheDo(int& tmp, unsigned int i, unsigned int j, int& current_place
 {
 	tmp = board[i][j];
 	if (tmp != current_place) {
-		if (current_diagonal.size() >= m) {
+		if (current_diagonal.size() == 3) {
 			winning_plays.push_back({ current_diagonal, Direction::DIAGONAL });
 		}
 		current_place = tmp;
@@ -241,7 +246,7 @@ void inline find_diagonal_wins() {
 		for (unsigned int i = x, j = y; i < n && j < n; j++, i++) {
 			doTheDo(tmp, i, j, current_place, current_diagonal);
 		}
-		if (current_diagonal.size() >= m) {
+		if (current_diagonal.size() == 3) {
 			winning_plays.push_back({ current_diagonal, Direction::DIAGONAL });
 		}
 		current_place = 0;
@@ -251,27 +256,27 @@ void inline find_diagonal_wins() {
 		for (unsigned int i = x, j = y; i < n && j < n; j++, i++) {
 			doTheDo(tmp, i, j, current_place, current_diagonal);
 		}
-		if (current_diagonal.size() >= m) {
+		if (current_diagonal.size() == 3) {
 			winning_plays.push_back({ current_diagonal, Direction::DIAGONAL });
 		}
 		current_place = 0;
 		current_diagonal.clear();
 	}
-	for (unsigned int y = 0, x = n-1; y < n; y++) {
+	for (unsigned int y = 0, x = n - 1; y < n; y++) {
 		for (unsigned int i = x, j = y; i < n && j < n; j++, i--) {
 			doTheDo(tmp, i, j, current_place, current_diagonal);
 		}
-		if (current_diagonal.size() >= m) {
+		if (current_diagonal.size() == 3) {
 			winning_plays.push_back({ current_diagonal, Direction::DIAGONAL });
 		}
 		current_place = 0;
 		current_diagonal.clear();
 	}
-	for (unsigned int y = 0, x = n-2; x < n; x--) {
+	for (unsigned int y = 0, x = n - 2; x < n; x--) {
 		for (unsigned int i = x, j = y; i < n && j < n; j++, i--) {
 			doTheDo(tmp, i, j, current_place, current_diagonal);
 		}
-		if (current_diagonal.size() >= m) {
+		if (current_diagonal.size() == 3) {
 			winning_plays.push_back({ current_diagonal, Direction::DIAGONAL });
 		}
 		current_place = 0;
@@ -285,38 +290,22 @@ void find_winning_plays() {
 	find_diagonal_wins();
 }
 
-bool board_has_one_winner() {
-	return !winning_plays.empty();
-}
-
-bool board_in_draw_state() {
-	return emptySquares == 0;
-}
-
 int main()
 {
-    ios::sync_with_stdio(false);
-    cin.tie(nullptr);
-    read_board();
-	find_winning_plays();
-	if (board_in_error_state()) {
-		cout << "ERROR" << endl;
-		return 0;
+	ios::sync_with_stdio(false);
+	cin.tie(nullptr);
+	read_boards();
+	for (const auto& b : boards) {
+		board = b.board;
+		boardSum = b.boardSum;
+		find_winning_plays();
+		if (board_in_error_state()) {
+			cout << "no" << endl;
+		}
+		else {
+			cout << "yes" << endl;
+		}
 	}
-	if (board_has_one_winner()) {
-		const coord loc = winning_plays[0].coords[0];
-		const char winner = board[loc.x][loc.y] == 1 ? 'X' : 'O';
-		cout << winner << " WINS" << endl;
-		return 0;
-	}
-	if(board_in_draw_state()) {
-		cout << "DRAW" << endl;
-		return 0;
-	}
-	
-	cout << "IN PROGRESS" << endl;
 
-	
-    //print_values();
-    return 0;
+	return 0;
 }
