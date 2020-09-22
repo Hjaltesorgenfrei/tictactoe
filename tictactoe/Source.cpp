@@ -206,28 +206,33 @@ void inline find_vertical_wins() {
 	}
 }
 
+void inline doTheDo(int& tmp, unsigned int i, unsigned int j, int& current_place, std::vector<coord>& current_diagonal)
+{
+	tmp = board[i][j];
+	if (tmp != current_place) {
+		if (current_diagonal.size() >= m) {
+			winning_plays.push_back({ current_diagonal, Direction::DIAGONAL });
+		}
+		current_place = tmp;
+		current_diagonal.clear();
+		if (current_place != 0) {
+			current_diagonal.push_back({ i, j });
+		}
+	}
+	else {
+		if (current_place != 0) {
+			current_diagonal.push_back({ i, j });
+		}
+	}
+}
+
 void inline find_diagonal_wins() {
 	vector<coord> current_diagonal;
 	int current_place = 0;
 	int tmp = 0;
 	for (unsigned int y = 0, x = 0; y < n; y++) {
 		for (unsigned int i = x, j = y; i < n && j < n; j++, i++) {
-			tmp = board[i][j];
-			if (tmp != current_place) {
-				if (current_diagonal.size() >= m) {
-					winning_plays.push_back({ current_diagonal, Direction::DIAGONAL });
-				}
-				current_place = tmp;
-				current_diagonal.clear();
-				if (current_place != 0) {
-					current_diagonal.push_back({ i, j });
-				}
-			}
-			else {
-				if (current_place != 0) {
-					current_diagonal.push_back({ i, j });
-				}
-			}
+			doTheDo(tmp, i, j, current_place, current_diagonal);
 		}
 		if (current_diagonal.size() >= m) {
 			winning_plays.push_back({ current_diagonal, Direction::DIAGONAL });
@@ -237,22 +242,27 @@ void inline find_diagonal_wins() {
 	}
 	for (unsigned int y = 0, x = 1; x < n; x++) {
 		for (unsigned int i = x, j = y; i < n && j < n; j++, i++) {
-			tmp = board[i][j];
-			if (tmp != current_place) {
-				if (current_diagonal.size() >= m) {
-					winning_plays.push_back({ current_diagonal, Direction::DIAGONAL });
-				}
-				current_place = tmp;
-				current_diagonal.clear();
-				if (current_place != 0) {
-					current_diagonal.push_back({ i, j });
-				}
-			}
-			else {
-				if (current_place != 0) {
-					current_diagonal.push_back({ i, j });
-				}
-			}
+			doTheDo(tmp, i, j, current_place, current_diagonal);
+		}
+		if (current_diagonal.size() >= m) {
+			winning_plays.push_back({ current_diagonal, Direction::DIAGONAL });
+		}
+		current_place = 0;
+		current_diagonal.clear();
+	}
+	for (unsigned int y = 0, x = n-1; y < n; y++) {
+		for (unsigned int i = x, j = y; i < n && j < n; j++, i--) {
+			doTheDo(tmp, i, j, current_place, current_diagonal);
+		}
+		if (current_diagonal.size() >= m) {
+			winning_plays.push_back({ current_diagonal, Direction::DIAGONAL });
+		}
+		current_place = 0;
+		current_diagonal.clear();
+	}
+	for (unsigned int y = 0, x = n-2; x < n; x--) {
+		for (unsigned int i = x, j = y; i < n && j < n; j++, i--) {
+			doTheDo(tmp, i, j, current_place, current_diagonal);
 		}
 		if (current_diagonal.size() >= m) {
 			winning_plays.push_back({ current_diagonal, Direction::DIAGONAL });
